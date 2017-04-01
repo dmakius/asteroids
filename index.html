@@ -1,0 +1,25 @@
+<html>
+	<head>
+		<title>Asteroids 2.0</title>
+	</head>
+
+	<body>
+		<!-- include the main game file -->
+    <script type="text/javascript" src="js/phaser.js"></script>
+    <script src="js/bootState.js"></script>
+    <script src="js/preloadState.js"></script>
+		<script src="js/gamestate.js"></script>
+    <script src="js/prefabs/bullet.js"></script>
+    <script src="js/prefabs/rock.js"></script>
+    <script>
+        var Asteroids = Asteroids || {};
+
+        Asteroids.game = new Phaser.Game(480, 320, Phaser.CANVAS, '');
+        Asteroids.game.state.add('BootState', Asteroids.BootState);
+        Asteroids.game.state.add('PreloadState', Asteroids.PreloadState);
+        Asteroids.game.state.add('GameState', Asteroids.GameState);
+        Asteroids.game.state.start('BootState');
+    </script>
+
+	</body>
+</html>
