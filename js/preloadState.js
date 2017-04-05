@@ -34,6 +34,7 @@ Asteroids.PreloadState = {
     this.game.load.image('healthUp', 'assets/healthUp.jpg');
     this.game.load.image('explosion', 'assets/explosion.jpg');
     this.game.load.image('badguy', 'assets/bad_guy.jpg');
+    this.game.load.spritesheet('newBadGuy', 'assets/brainy_idle.jpg', 100, 42, 8);
   },
 
   create: function(){

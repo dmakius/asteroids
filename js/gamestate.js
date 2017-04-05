@@ -23,6 +23,7 @@ Asteroids.GameState = {
     // this.background.autoScroll(-150, -20);
     this.initRocks();
     this.initBullets();
+    this.initAliens();
   },
   update: function(){
     this.game.physics.arcade.overlap(this.Bullets, this.rocks, this.explodeRocks, null, this);
@@ -71,6 +72,13 @@ Asteroids.GameState = {
     this.bulletTime = 0;
     this.Bullets = this.add.group();
     this.Bullets.enableBody = true;
+  },
+
+  initAliens: function(){
+    this.Aliens = this.add.group();
+    this.Aliens.enableBody = true;
+    var alien = new Asteroids.Alien(this.game ,100, 100);
+    this.Aliens.add(alien);
   },
 
   createBullet: function(){
