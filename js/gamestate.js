@@ -13,7 +13,7 @@ Asteroids.GameState = {
 
     //create the player
     this.player = this.add.sprite(this.game.world.centerX, this.game.world.height - 50, 'newPlayer');
-    this.player.animations.add('fly', [0,1,3,4], 5, true);
+    this.player.animations.add('fly', [0,1,2,3,4], 5, true);
     this.player.animations.play('fly');
     this.player.anchor.setTo(0.5);
     this.player.scale.setTo(1.75,1.75);
@@ -144,6 +144,7 @@ Asteroids.GameState = {
       this.game.healthboard.setText("Health: " + this.player.health + "%");
       this.playerInvinciblityTime = this.game.time.now + 1000;
     }
+
   }
 
 }
