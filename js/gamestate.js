@@ -9,10 +9,15 @@ Asteroids.GameState = {
     this.background = this.game.add.tileSprite(0, 0, 480, 320, 'space');
     this.background.autoScroll(-100, 0);
 
+    this.score = 0;
+
     //create the player
     this.player = this.add.sprite(this.game.world.centerX, this.game.world.height - 50, 'player');
     this.player.anchor.setTo(0.5);
     this.player.scale.setTo(0.75,0.75);
+    this.player.health = 100;
+    this.playerInvinciblityTime = 0;
+
     this.game.physics.arcade.enable(this.player);
     this.player.body.collideWorldBounds = true;
     this.game.camera.follow(this.player);
@@ -24,9 +29,15 @@ Asteroids.GameState = {
     this.initRocks();
     this.initBullets();
     this.initAliens();
+    this.initScoreAndHealth();
   },
   update: function(){
+    //Bullet Collisions
     this.game.physics.arcade.overlap(this.Bullets, this.rocks, this.explodeRocks, null, this);
+    this.game.physics.arcade.overlap(this.Bullets, this.Aliens, this.explodeAliens,null, this);
+
+    //Player Collisions
+    this.game.physics.arcade.overlap(this.player, this.rocks, this.damagePlayer, null, this);
     //console.log("game state update!");
 
     this.player.body.velocity.x = 0;
@@ -48,6 +59,11 @@ Asteroids.GameState = {
     if(this.fire.isDown){
         this.createBullet();
     }
+  },
+
+  initScoreAndHealth: function(){
+    this.game.scoreBoard =  this.game.add.bitmapText(10, 20, "newFont", "SCORE: " + this.score , 24);
+    this.game.healthboard = this.game.add.bitmapText(this.game.world.bounds.width - 160, 20, "newFont", "HEALTH: " + this.player.health +"%" , 24);
   },
 
   initRocks: function(){
@@ -107,6 +123,24 @@ Asteroids.GameState = {
 
     rock.body.x = 500;
     rock.body.y = Math.floor(Math.random()* 300);
+
+    //update players score
+    this.score += 100;
+    this.game.scoreBoard.setText("SCORE: " + this.score);
+  },
+
+  explodeAliens: function(bullet, alien){
+    alien.reset(600,200);
+    this.score += 300;
+    this.game.scoreBoard.setText("SCORE: " + this.score);
+  },
+
+  damagePlayer: function(player, rock){
+    if (this.game.time.now > this.playerInvinciblityTime){
+      this.player.health -= 10;
+      this.game.healthboard.setText("Health: " + this.player.health + "%");
+      this.playerInvinciblityTime = this.game.time.now + 1000;
+    }
   }
 
 }

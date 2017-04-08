@@ -35,6 +35,10 @@ Asteroids.PreloadState = {
     this.game.load.image('explosion', 'assets/explosion.jpg');
     this.game.load.image('badguy', 'assets/bad_guy.jpg');
     this.game.load.spritesheet('newBadGuy', 'assets/brainy_idle.jpg', 100, 42, 8);
+
+    //font
+    this.game.load.bitmapFont('newFont', 'assets/fonts/font.png', 'assets/fonts/font.fnt');
+
   },
 
   create: function(){
