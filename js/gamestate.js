@@ -12,9 +12,11 @@ Asteroids.GameState = {
     this.score = 0;
 
     //create the player
-    this.player = this.add.sprite(this.game.world.centerX, this.game.world.height - 50, 'player');
+    this.player = this.add.sprite(this.game.world.centerX, this.game.world.height - 50, 'newPlayer');
+    this.player.animations.add('fly', [0,1,3,4], 5, true);
+    this.player.animations.play('fly');
     this.player.anchor.setTo(0.5);
-    this.player.scale.setTo(0.75,0.75);
+    this.player.scale.setTo(1.75,1.75);
     this.player.health = 100;
     this.playerInvinciblityTime = 0;
 
@@ -62,8 +64,9 @@ Asteroids.GameState = {
   },
 
   initScoreAndHealth: function(){
-    this.game.scoreBoard =  this.game.add.bitmapText(10, 20, "newFont", "SCORE: " + this.score , 24);
-    this.game.healthboard = this.game.add.bitmapText(this.game.world.bounds.width - 160, 20, "newFont", "HEALTH: " + this.player.health +"%" , 24);
+    this.game.scoreBoard =  this.game.add.bitmapText(10, 10, "newFont", "SCORE: " + this.score , 24);
+    this.game.healthboard = this.game.add.bitmapText(this.game.world.bounds.width - 160, 10, "newFont", "HEALTH: " + this.player.health +"%" , 24);
+    this.game.scoreBoard.style.fill = 0xFF0000;
   },
 
   initRocks: function(){
