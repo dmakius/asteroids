@@ -18,6 +18,7 @@ Asteroids.GameState = {
     this.player.anchor.setTo(0.5);
     this.player.scale.setTo(1.75,1.75);
     this.player.health = 100;
+    this.player.invincible = false;
     this.playerInvinciblityTime = 0;
 
     this.game.physics.arcade.enable(this.player);
@@ -44,6 +45,20 @@ Asteroids.GameState = {
 
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
+
+    //player blinking if hit
+    if(this.player.invincible){
+      if(this.game.time.now % 2 == 0){
+       this.player.tint = 0xff0000;
+      }else{
+        this.player.tint = 0xffffff;
+      }
+    }
+    //turn of blinking after invincibity time passed
+    if(this.game.time.now > this.playerInvinciblityTime){
+      this.player.invincible = false;
+      this.player.tint = 0xffffff;
+    }
 
     //updating the player
     if(this.cursors.up.isDown){
@@ -109,7 +124,6 @@ Asteroids.GameState = {
       }else{
         bullet.reset(this.player.x + 40, this.player.y);
       }
-
       bullet.body.velocity.x = this.BULLET_SPEED;
       this.bulletTime = this.game.time.now + 250;
     }
@@ -141,8 +155,9 @@ Asteroids.GameState = {
   damagePlayer: function(player, rock){
     if (this.game.time.now > this.playerInvinciblityTime){
       this.player.health -= 10;
+      this.player.invincible = true;
       this.game.healthboard.setText("Health: " + this.player.health + "%");
-      this.playerInvinciblityTime = this.game.time.now + 1000;
+      this.playerInvinciblityTime = this.game.time.now + 700;
     }
 
   }
