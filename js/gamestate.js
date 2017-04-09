@@ -37,11 +37,11 @@ Asteroids.GameState = {
   update: function(){
     //Bullet Collisions
     this.game.physics.arcade.overlap(this.Bullets, this.rocks, this.explodeRocks, null, this);
-    this.game.physics.arcade.overlap(this.Bullets, this.Aliens, this.explodeAliens,null, this);
+    this.game.physics.arcade.overlap(this.Bullets, this.Aliens, this.damageAlien, null, this);
 
     //Player Collisions
     this.game.physics.arcade.overlap(this.player, this.rocks, this.damagePlayer, null, this);
-    //console.log("game state update!");
+    this.game.physics.arcade.overlap(this.player, this.Aliens, this.damagePlayer, null, this);
 
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
@@ -146,20 +146,22 @@ Asteroids.GameState = {
     this.game.scoreBoard.setText("SCORE: " + this.score);
   },
 
-  explodeAliens: function(bullet, alien){
-    alien.reset(600,200);
-    this.score += 300;
-    this.game.scoreBoard.setText("SCORE: " + this.score);
-  },
-
-  damagePlayer: function(player, rock){
+  damagePlayer: function(player, enemy){
     if (this.game.time.now > this.playerInvinciblityTime){
+      if(enemy.key === 'newBadGuy'){this.player.health -= 30;}
+      if(enemy.key === 'rock'){this.player.health -= 10;}
       this.player.health -= 10;
       this.player.invincible = true;
       this.game.healthboard.setText("Health: " + this.player.health + "%");
       this.playerInvinciblityTime = this.game.time.now + 700;
     }
+  },
 
+  damageAlien: function(bullet, alien){
+    bullet.kill();
+    alien.damage();
+    this.score += 300;
+    this.game.scoreBoard.setText("SCORE: " + this.score);
   }
 
 }
