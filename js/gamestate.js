@@ -132,7 +132,7 @@ Asteroids.GameState = {
   explodeRocks: function(bullet, rock){
     bullet.kill();
     var emitter = this.game.add.emitter(rock.x, rock.y, 50);
-    emitter.makeParticles('explosionParticle');
+    emitter.makeParticles('rockParticle');
     emitter.minParticleSpeed.setTo(-50, -50);
     emitter.maxParticleSpeed.setTo(50, 50);
     emitter.gravity = 0;
