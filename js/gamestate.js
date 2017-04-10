@@ -33,6 +33,7 @@ Asteroids.GameState = {
     this.initBullets();
     this.initAliens();
     this.initScoreAndHealth();
+    this.initHealth();
   },
   update: function(){
     //Bullet Collisions
@@ -42,7 +43,7 @@ Asteroids.GameState = {
     //Player Collisions
     this.game.physics.arcade.overlap(this.player, this.rocks, this.damagePlayer, null, this);
     this.game.physics.arcade.overlap(this.player, this.Aliens, this.damagePlayer, null, this);
-
+    this.game.physics.arcade.overlap(this.player, this.health, this.playerRecover, null, this);
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
 
@@ -101,7 +102,6 @@ Asteroids.GameState = {
       rock.body.velocity.x = -randomSpeed;
     }
   },
-
   initBullets: function(){
     this.bulletTime = 0;
     this.Bullets = this.add.group();
@@ -113,6 +113,11 @@ Asteroids.GameState = {
     this.Aliens.enableBody = true;
     var alien = new Asteroids.Alien(this.game ,100, 100);
     this.Aliens.add(alien);
+  },
+
+  initHealth: function(){
+    this.health = this.add.group();
+    this.health.enableBody = true;
   },
 
   createBullet: function(){
@@ -131,6 +136,14 @@ Asteroids.GameState = {
 
   explodeRocks: function(bullet, rock){
     bullet.kill();
+    //create healthup
+    var healthChange = Math.random();
+    if(healthChange > 0.9){
+      console.log("Health Up");
+      var healthUp = new Asteroids.HealthUp(this.game, rock.x, rock.y);
+      this.health.add(healthUp);
+    }
+    //create explosion
     var emitter = this.game.add.emitter(rock.x, rock.y, 50);
     emitter.makeParticles('rockParticle');
     emitter.minParticleSpeed.setTo(-50, -50);
@@ -157,11 +170,16 @@ Asteroids.GameState = {
     }
   },
 
+  playerRecover: function(player, healthUp){
+    healthUp.kill();
+    player.health = 100;
+    this.game.healthboard.setText("HEALTH: " + player.health + "%");
+  },
+
   damageAlien: function(bullet, alien){
     bullet.kill();
     alien.damage();
     this.score += 300;
     this.game.scoreBoard.setText("SCORE: " + this.score);
   }
-
 }
