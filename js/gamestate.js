@@ -164,10 +164,27 @@ Asteroids.GameState = {
       if(enemy.key === 'newBadGuy'){this.player.health -= 30;}
       if(enemy.key === 'rock'){this.player.health -= 10;}
       this.player.health -= 10;
+      if(this.player.health <= 90){
+        this.playerDead(player);
+      }
       this.player.invincible = true;
       this.game.healthboard.setText("Health: " + this.player.health + "%");
       this.playerInvinciblityTime = this.game.time.now + 700;
     }
+  },
+
+  playerDead: function(player){
+    player.visible = false;
+    var emitter = this.game.add.emitter(player.x, player.y, 50);
+    emitter.makeParticles('explosionParticle');
+    emitter.minParticleSpeed.setTo(-50, -50);
+    emitter.maxParticleSpeed.setTo(50, 50);
+    emitter.gravity = 0;
+    emitter.start(true, 500, null, 100);
+    
+    //TO DO: Add a timer call back function to reset game
+    this.game.time.events.add(Phaser.Timer.SECOND * 4, this.game.state.start("GameState"), this);
+
   },
 
   playerRecover: function(player, healthUp){

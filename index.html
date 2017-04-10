@@ -20,7 +20,7 @@
     <script>
         var Asteroids = Asteroids || {};
 
-        Asteroids.game = new Phaser.Game(480, 320, Phaser.CANVAS, '');
+        Asteroids.game = new Phaser.Game(480, 320, Phaser.AUTO, '');
         Asteroids.game.state.add('BootState', Asteroids.BootState);
         Asteroids.game.state.add('PreloadState', Asteroids.PreloadState);
         Asteroids.game.state.add('GameState', Asteroids.GameState);
