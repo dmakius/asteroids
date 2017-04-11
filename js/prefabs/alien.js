@@ -11,7 +11,8 @@ Asteroids.Alien = function(game, x, y){
   this.health = 100;
   this.yHolder = 0;
   this.hit = false;
-  this.invincibilityTime = 0
+  this.invincibilityTime = 0;
+  this.alienHitSound = game.add.audio('enemyHit');
 }
 
 Asteroids.Alien.prototype = Object.create(Phaser.Sprite.prototype);

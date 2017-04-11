@@ -6,6 +6,7 @@ Asteroids.Rock = function(game, x, y, key){
   this.scale.setTo(0.5,0.5);
   this.checkWorldBounds = true;
   this.outOfBoundsKill = false;
+  this.explosionSound = game.add.audio('explosion');
 }
 
 Asteroids.Rock.prototype = Object.create(Phaser.Sprite.prototype);

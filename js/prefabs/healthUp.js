@@ -6,6 +6,7 @@ Asteroids.HealthUp = function(game, x, y){
   this.scale.setTo(0.35);
   this.checkWorldBounds = true;
   this.outOfBoundsKill = true;
+  this.HealthUpSound = game.add.audio('health');
 }
 
 Asteroids.HealthUp.prototype = Object.create(Phaser.Sprite.prototype);

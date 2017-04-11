@@ -8,17 +8,14 @@ Asteroids.GameState = {
     console.log(this);
     this.background = this.game.add.tileSprite(0, 0, 480, 320, 'space');
     this.background.autoScroll(-100, 0);
-
+    this.pause = false;
     this.score = 0;
 
     //importing music files
-    this.mainMusic = this.game.add.audio('main');
     this.shootSound = this.game.add.audio('beam');
-    this.enemyHitSound = this.game.add.audio('enemyHit');
-    this.explosionSound = this.game.add.audio('explosion');
     this.playerHurtSound = this.game.add.audio('playerHurt');
-    this.powerUpSound = this.game.add.audio('health');
     this.playerDeadSound = this.game.add.audio('die');
+    this.mainMusic = this.game.add.audio('main');
     this.mainMusic.play();
 
     //create the player
@@ -47,50 +44,51 @@ Asteroids.GameState = {
     this.initHealth();
   },
   update: function(){
-    //Bullet Collisions
-    this.game.physics.arcade.overlap(this.Bullets, this.rocks, this.explodeRocks, null, this);
-    this.game.physics.arcade.overlap(this.Bullets, this.Aliens, this.damageAlien, null, this);
+      //Bullet Collisions
+      this.game.physics.arcade.overlap(this.Bullets, this.rocks, this.explodeRocks, null, this);
+      this.game.physics.arcade.overlap(this.Bullets, this.Aliens, this.damageAlien, null, this);
 
-    //Player Collisions
-    if(!this.player.dead){
-      this.game.physics.arcade.overlap(this.player, this.rocks, this.damagePlayer, null, this);
-      this.game.physics.arcade.overlap(this.player, this.Aliens, this.damagePlayer, null, this);
-      this.game.physics.arcade.overlap(this.player, this.health, this.playerRecover, null, this);
-    }
+      //Player Collisions
+      if(!this.player.dead){
+        this.game.physics.arcade.overlap(this.player, this.rocks, this.damagePlayer, null, this);
+        this.game.physics.arcade.overlap(this.player, this.Aliens, this.damagePlayer, null, this);
+        this.game.physics.arcade.overlap(this.player, this.health, this.playerRecover, null, this);
+      }
 
-    this.player.body.velocity.x = 0;
-    this.player.body.velocity.y = 0;
+      this.player.body.velocity.x = 0;
+      this.player.body.velocity.y = 0;
 
-    //player blinking if hit
-    if(this.player.invincible){
-      if(this.game.time.now % 2 == 0){
-       this.player.tint = 0xff0000;
-      }else{
+      //player blinking if hit
+      if(this.player.invincible){
+        if(this.game.time.now % 2 == 0){
+         this.player.tint = 0xff0000;
+        }else{
+          this.player.tint = 0xffffff;
+        }
+      }
+      //turn of blinking after invincibity time passed
+      if(this.game.time.now > this.playerInvinciblityTime){
+        this.player.invincible = false;
         this.player.tint = 0xffffff;
       }
-    }
-    //turn of blinking after invincibity time passed
-    if(this.game.time.now > this.playerInvinciblityTime){
-      this.player.invincible = false;
-      this.player.tint = 0xffffff;
-    }
 
-    //updating the player
-    if(this.cursors.up.isDown){
-      this.player.body.velocity.y = -100;
-    }
-    if(this.cursors.down.isDown){
-      this.player.body.velocity.y = 100;
-    }
-    if(this.cursors.left.isDown){
-      this.player.body.velocity.x = -100;
-    }
-    if(this.cursors.right.isDown){
-      this.player.body.velocity.x = 100;
-    }
-    if(this.fire.isDown){
-      this.createBullet(this);
-    }
+      //updating the player
+      if(this.cursors.up.isDown){
+        this.player.body.velocity.y = -100;
+      }
+      if(this.cursors.down.isDown){
+        this.player.body.velocity.y = 100;
+      }
+      if(this.cursors.left.isDown){
+        this.player.body.velocity.x = -100;
+      }
+      if(this.cursors.right.isDown){
+        this.player.body.velocity.x = 100;
+      }
+      if(this.fire.isDown && !this.player.dead){
+        this.createBullet(this);
+      }
+
   },
 
   initScoreAndHealth: function(){
@@ -158,7 +156,10 @@ Asteroids.GameState = {
       var healthUp = new Asteroids.HealthUp(this.game, rock.x, rock.y);
       this.health.add(healthUp);
     }
+
     //create explosion
+    rock.explosionSound.play();
+
     var emitter = this.game.add.emitter(rock.x, rock.y, 50);
     emitter.makeParticles('rockParticle');
     emitter.minParticleSpeed.setTo(-50, -50);
@@ -176,8 +177,11 @@ Asteroids.GameState = {
 
   damagePlayer: function(player, enemy){
     if (this.game.time.now > this.playerInvinciblityTime){
-      if(enemy.key === 'newBadGuy'){this.player.health -= 30;}
-      if(enemy.key === 'rock'){this.player.health -= 10;}
+      if(enemy.key === 'newBadGuy'){
+        this.player.health -= 30;}
+      if(enemy.key === 'rock'){
+        this.player.health -= 10;
+      }
       this.playerHurtSound.play();
       this.player.health -= 10;
       if(this.player.health <= 90){
@@ -210,6 +214,7 @@ Asteroids.GameState = {
   },
 
   playerRecover: function(player, healthUp){
+    healthUp.HealthUpSound.play();
     healthUp.kill();
     player.health = 100;
     this.game.healthboard.setText("HEALTH: " + player.health + "%");
@@ -217,8 +222,8 @@ Asteroids.GameState = {
 
   damageAlien: function(bullet, alien){
     bullet.kill();
+    alien.alienHitSound.play();
     alien.damage();
-    this.enemyHitSound.play();
     this.score += 300;
     this.game.scoreBoard.setText("SCORE: " + this.score);
   }
