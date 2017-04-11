@@ -8,8 +8,7 @@ Asteroids.BootState = {
     console.log("preload bootState");
     this.game.load.image('background', 'assets/background.png');
 		this.game.load.image('preloader', 'assets/preloader.png');
-    this.game.load.image('explosionParticle', 'assets/explosionParticle.png');
-
+    this.game.load.image('space', 'assets/space.jpg');
   },
 
   create: function(){

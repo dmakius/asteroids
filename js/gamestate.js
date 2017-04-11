@@ -11,14 +11,25 @@ Asteroids.GameState = {
 
     this.score = 0;
 
+    //importing music files
+    this.mainMusic = this.game.add.audio('main');
+    this.shootSound = this.game.add.audio('beam');
+    this.enemyHitSound = this.game.add.audio('enemyHit');
+    this.explosionSound = this.game.add.audio('explosion');
+    this.playerHurtSound = this.game.add.audio('playerHurt');
+    this.powerUpSound = this.game.add.audio('health');
+    this.playerDeadSound = this.game.add.audio('die');
+    this.mainMusic.play();
+
     //create the player
-    this.player = this.add.sprite(this.game.world.centerX, this.game.world.height - 50, 'newPlayer');
+    this.player = this.add.sprite(50, this.game.world.height - 50, 'newPlayer');
     this.player.animations.add('fly', [0,1,2,3,4], 5, true);
     this.player.animations.play('fly');
     this.player.anchor.setTo(0.5);
     this.player.scale.setTo(1.75,1.75);
     this.player.health = 100;
     this.player.invincible = false;
+    this.player.dead = false;
     this.playerInvinciblityTime = 0;
 
     this.game.physics.arcade.enable(this.player);
@@ -41,9 +52,12 @@ Asteroids.GameState = {
     this.game.physics.arcade.overlap(this.Bullets, this.Aliens, this.damageAlien, null, this);
 
     //Player Collisions
-    this.game.physics.arcade.overlap(this.player, this.rocks, this.damagePlayer, null, this);
-    this.game.physics.arcade.overlap(this.player, this.Aliens, this.damagePlayer, null, this);
-    this.game.physics.arcade.overlap(this.player, this.health, this.playerRecover, null, this);
+    if(!this.player.dead){
+      this.game.physics.arcade.overlap(this.player, this.rocks, this.damagePlayer, null, this);
+      this.game.physics.arcade.overlap(this.player, this.Aliens, this.damagePlayer, null, this);
+      this.game.physics.arcade.overlap(this.player, this.health, this.playerRecover, null, this);
+    }
+
     this.player.body.velocity.x = 0;
     this.player.body.velocity.y = 0;
 
@@ -75,7 +89,7 @@ Asteroids.GameState = {
       this.player.body.velocity.x = 100;
     }
     if(this.fire.isDown){
-        this.createBullet();
+      this.createBullet(this);
     }
   },
 
@@ -107,21 +121,19 @@ Asteroids.GameState = {
     this.Bullets = this.add.group();
     this.Bullets.enableBody = true;
   },
-
   initAliens: function(){
     this.Aliens = this.add.group();
     this.Aliens.enableBody = true;
     var alien = new Asteroids.Alien(this.game ,100, 100);
     this.Aliens.add(alien);
   },
-
   initHealth: function(){
     this.health = this.add.group();
     this.health.enableBody = true;
   },
-
-  createBullet: function(){
+  createBullet: function(game){
     if (this.game.time.now > this.bulletTime){
+
       var bullet = this.Bullets.getFirstExists(false);
       if(!bullet){
         bullet = new Asteroids.Bullet(this.game, this.player.x + 40, this.player.y);
@@ -129,13 +141,16 @@ Asteroids.GameState = {
       }else{
         bullet.reset(this.player.x + 40, this.player.y);
       }
+      game.shootSound.play();
       bullet.body.velocity.x = this.BULLET_SPEED;
       this.bulletTime = this.game.time.now + 250;
     }
   },
 
-  explodeRocks: function(bullet, rock){
+  explodeRocks: function(bullet, rock, game){
     bullet.kill();
+    //game.explosionSound.play();
+
     //create healthup
     var healthChange = Math.random();
     if(healthChange > 0.9){
@@ -163,6 +178,7 @@ Asteroids.GameState = {
     if (this.game.time.now > this.playerInvinciblityTime){
       if(enemy.key === 'newBadGuy'){this.player.health -= 30;}
       if(enemy.key === 'rock'){this.player.health -= 10;}
+      this.playerHurtSound.play();
       this.player.health -= 10;
       if(this.player.health <= 90){
         this.playerDead(player);
@@ -174,17 +190,23 @@ Asteroids.GameState = {
   },
 
   playerDead: function(player){
+    this.mainMusic.stop();
+    this.playerDeadSound.play();
     player.visible = false;
+    this.player.dead = true;
     var emitter = this.game.add.emitter(player.x, player.y, 50);
     emitter.makeParticles('explosionParticle');
     emitter.minParticleSpeed.setTo(-50, -50);
     emitter.maxParticleSpeed.setTo(50, 50);
     emitter.gravity = 0;
     emitter.start(true, 500, null, 100);
-    
-    //TO DO: Add a timer call back function to reset game
-    this.game.time.events.add(Phaser.Timer.SECOND * 4, this.game.state.start("GameState"), this);
+    this.game.gameOverText =  this.game.add.bitmapText(this.game.world.centerX, this.game.world.centerY, "newFont", "GAME OVER" , 48);
+    this.game.gameOverText.anchor.setTo(0.5);
+    this.game.time.events.add(Phaser.Timer.SECOND * 4, this.resetGame, this);
+  },
 
+  resetGame: function(){
+   this.game.state.start("MenuState")
   },
 
   playerRecover: function(player, healthUp){
@@ -196,6 +218,7 @@ Asteroids.GameState = {
   damageAlien: function(bullet, alien){
     bullet.kill();
     alien.damage();
+    this.enemyHitSound.play();
     this.score += 300;
     this.game.scoreBoard.setText("SCORE: " + this.score);
   }

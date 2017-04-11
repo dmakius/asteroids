@@ -6,9 +6,11 @@ Asteroids.PreloadState = {
 
   preload: function(){
     console.log("preload preloadtState");
-    this.game.stage.backgroundColor = '#5e3f6b';
+    this.background = this.game.add.tileSprite(0, 0, 480, 320, 'space');
+    this.background.autoScroll(-100, 0);
+
     this.preloadBar = this.game.add.sprite(this.game.width/2, this.game.height/2, 'preloader');
-		this.preloadBar.anchor.setTo(0.5, 0.5);
+    this.preloadBar.anchor.setTo(0.5, 0.5);
     this.load.setPreloadSprite(this.preloadBar);
     //this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
 
@@ -34,18 +36,18 @@ Asteroids.PreloadState = {
     this.game.load.image('healthUp', 'assets/healthUp.jpg');
     this.game.load.image('explosion', 'assets/explosion.jpg');
     this.game.load.image('rockParticle', 'assets/rockParticle.png');
+    this.game.load.image('explosionParticle', 'assets/explosionParticle.png');
     this.game.load.image('badguy', 'assets/bad_guy.jpg');
     this.game.load.spritesheet('newBadGuy', 'assets/brainy_idle.jpg', 100, 42, 8);
     this.game.load.spritesheet('newPlayer', 'assets/newPlayer5.png', 31, 24.8, 5);
 
     //font
     this.game.load.bitmapFont('newFont', 'assets/fonts/font.png', 'assets/fonts/font.fnt');
-
   },
 
   create: function(){
     this.preloadBar.cropEnabled = false;
     console.log("create preloadState");
-    this.game.state.start('GameState');
+    this.game.state.start('MenuState');
   }
 }

@@ -11,7 +11,7 @@
     <script src="js/bootState.js"></script>
     <script src="js/preloadState.js"></script>
 		<script src="js/gamestate.js"></script>
-
+		<script src="js/menuState.js"></script>
 		<!-- importing game prefabs -->
 		<script src="js/prefabs/alien.js"></script>
     <script src="js/prefabs/bullet.js"></script>
@@ -23,6 +23,7 @@
         Asteroids.game = new Phaser.Game(480, 320, Phaser.AUTO, '');
         Asteroids.game.state.add('BootState', Asteroids.BootState);
         Asteroids.game.state.add('PreloadState', Asteroids.PreloadState);
+				Asteroids.game.state.add('MenuState', Asteroids.MenuState);
         Asteroids.game.state.add('GameState', Asteroids.GameState);
         Asteroids.game.state.start('BootState');
     </script>
